@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary - My CV</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('background2.jpg');
+            background-size: cover;
+            color: white;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Summary of Your Information</h1>
+        <h2>MAKHUVELE MASANA</h2>
+    </header>
+
+    <div class="container">
+        <h3>Your Information:</h3>
+        <p><strong>Name:</strong> <span id="summaryName"></span></p>
+        <p><strong>Email:</strong> <span id="summaryEmail"></span></p>
+        <p><strong>Bio:</strong> <span id="summaryBio"></span></p>
+        <p><strong>Degree:</strong> <span id="summaryDegree"></span></p>
+        <p><strong>Institution:</strong> <span id="summaryInstitution"></span></p>
+        <p><strong>Year of Graduation:</strong> <span id="summaryYear"></span></p>
+        <p><strong>Job Title:</strong> <span id="summaryJobTitle"></span></p>
+        <p><strong>Company:</strong> <span id="summaryCompany"></span></p>
+        <p><strong>Duration:</strong> <span id="summaryDuration"></span></p>
+        <p><strong>Skills:</strong> <span id="summarySkills"></span></p>
+        <p><strong>Projects:</strong> <span id="summaryProjects"></span></p>
+        <p><strong>Contact Info:</strong> <span id="summaryContact"></span></p>
+    </div>
+
+    <footer>
+        <button id="downloadBtn">Download MY CV</button>
+    </footer>
+
+    <script>
+        // Populate the summary with data from localStorage
+        document.getElementById('summaryName').textContent = localStorage.getItem('name');
+        document.getElementById('summaryEmail').textContent = localStorage.getItem('email');
+        document.getElementById('summaryBio').textContent = localStorage.getItem('bio');
+        document.getElementById('summaryDegree').textContent = localStorage.getItem('degree');
+        document.getElementById('summaryInstitution').textContent = localStorage.getItem('institution');
+        document.getElementById('summaryYear').textContent = localStorage.getItem('year');
+        document.getElementById('summaryJobTitle').textContent = localStorage.getItem('jobTitle');
+        document.getElementById('summaryCompany').textContent = localStorage.getItem('company');
+        document.getElementById('summaryDuration').textContent = localStorage.getItem('duration');
+        document.getElementById('summarySkills').textContent = localStorage.getItem('skills');
+        document.getElementById('summaryProjects').textContent = localStorage.getItem('projects');
+        document.getElementById('summaryContact').textContent = localStorage.getItem('contactInfo');
+
+        // Download the summary as a text file
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const data = `
+                Name: ${localStorage.getItem('name')}
+                Email: ${localStorage.getItem('email')}
+                Bio: ${localStorage.getItem('bio')}
+                Degree: ${localStorage.getItem('degree')}
+                Institution: ${localStorage.getItem('institution')}
+                Year of Graduation: ${localStorage.getItem('year')}
+                Job Title: ${localStorage.getItem('jobTitle')}
+                Company: ${localStorage.getItem('company')}
+                Duration: ${localStorage.getItem('duration')}
+                Skills: ${localStorage.getItem('skills')}
+                Projects: ${localStorage.getItem('projects')}
+                Contact Info: ${localStorage.getItem('contactInfo')}
+            `;
+
+            const blob = new Blob([data], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'summary.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+    </script>
+</body>
+</html>

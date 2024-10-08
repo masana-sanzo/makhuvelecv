@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - My CV</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('1.jpg');
+            background-size: cover;
+            color: white;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        footer a {
+            color: lightblue;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Projects</h1>
+        <h2>MAKHUVELE MASANA</h2>
+    </header>
+
+    <div class="container">
+        <label for="projects">Projects (comma-separated):</label>
+        <input type="text" id="projects" value="Project 1, Project 2, Project 3">
+    </div>
+
+    <footer>
+        <a href="page6.html" onclick="saveProjects()">Next: Contact</a>
+    </footer>
+
+    <script>
+        function saveProjects() {
+            localStorage.setItem('projects', document.getElementById('projects').value);
+        }
+    </script>
+</body>
+</html>

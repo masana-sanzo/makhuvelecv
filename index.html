@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My CV</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('background2.jpg'); /* Add your background image path */
+            background-size: cover;
+            color: white;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 20px;
+        }
+
+        .box {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #fff;
+            border-radius: 10px;
+            margin: 10px;
+            padding: 20px;
+            width: 200px;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .box:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to My CV</h1>
+        <h2>MAKHUVELE MASANA</h2>
+    </header>
+
+    <div class="container">
+        <div class="box" onclick="location.href='page1.html'">
+            <h2>Personal Information</h2>
+            <p>My Personal information.</p>
+        </div>
+        <div class="box" onclick="location.href='page2.html'">
+            <h2>Education</h2>
+            <p>My academic background.</p>
+        </div>
+        <div class="box" onclick="location.href='page3.html'">
+            <h2>Work Experience</h2>
+            
+        </div>
+        <div class="box" onclick="location.href='page4.html'">
+            <h2>Skills</h2>
+            <p>My abilities and skills.</p>
+        </div>
+        <div class="box" onclick="location.href='page5.html'">
+            <h2>Projects</h2>
+            <p>My completed projects.</p>
+        </div>
+        <div class="box" onclick="location.href='page6.html'">
+            <h2>Contact information</h2>
+        </div>
+        <div class="box" onclick="location.href='page7.html'">
+            <h2>Show all information</h2>
+        </div>
+    </div>
+</body>
+</html>

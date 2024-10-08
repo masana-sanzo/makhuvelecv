@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Information - My CV</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('1.jpg');
+            background-size: cover;
+            color: white;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        footer a {
+            color: lightblue;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Personal Information</h1>
+        <h2>MAKHUVELE MASANA</h2>
+    </header>
+
+    <div class="container">
+        <label for="name">Name:</label>
+        <input type="text" id="name" value="Makhuvele Masana">
+        <label for="email">Email:</label>
+        <input type="email" id="email" value="sanzokhubs@gamil.com">
+        <label for="bio">Bio:</label>
+        <textarea id="bio" rows="4">Experienced financial analyst with expertise in financial modeling, data analysis, and business strategy.</textarea>
+    </div>
+
+    <footer>
+        <a href="page2.html" onclick="savePersonalInfo()">Next Page: Education</a>
+    </footer>
+
+    <script>
+        function savePersonalInfo() {
+            localStorage.setItem('name', document.getElementById('name').value);
+            localStorage.setItem('email', document.getElementById('email').value);
+            localStorage.setItem('bio', document.getElementById('bio').value);
+        }
+    </script>
+</body>
+</html>
