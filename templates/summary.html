@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Summary - My CV{% endblock %}
+{% block body_class %}summary-page{% endblock %}
+{% block content %}
+<header>
+    <h1>Summary of Your Information</h1>
+    <h2>MAKHUVELE MASANA</h2>
+</header>
+<main class="container">
+    <h3>Your Information:</h3>
+    {% for label, key in fields %}
+    <p><strong>{{ label }}:</strong> {{ cv.get(key, '') }}</p>
+    {% endfor %}
+</main>
+<footer class="summary-actions">
+    <a class="button" href="{{ url_for('download') }}">Download MY CV</a>
+    <a href="{{ url_for('index') }}">Home</a>
+</footer>
+{% endblock %}

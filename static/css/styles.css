@@ -1,0 +1,126 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    color: white;
+    font-family: Arial, sans-serif;
+    background-color: #18221e;
+    background-position: center;
+    background-size: cover;
+}
+
+.home-page {
+    background-image: url("/assets/background2.jpg");
+}
+
+.form-page {
+    background-image: url("/assets/1.jpg");
+}
+
+.summary-page {
+    background-image: url("/assets/background2.jpg");
+}
+
+header {
+    padding: 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.home-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.box,
+.container {
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.box {
+    width: 200px;
+    margin: 10px;
+    border: 1px solid #fff;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    transition: transform 0.2s;
+}
+
+.box:hover {
+    transform: scale(1.05);
+}
+
+.container {
+    box-sizing: border-box;
+    width: 80%;
+    max-width: 640px;
+    margin: 20px auto;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input,
+textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    font: inherit;
+}
+
+textarea {
+    resize: vertical;
+}
+
+footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.form-actions,
+.summary-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+
+.form-actions a,
+.summary-actions > a:not(.button) {
+    color: lightblue;
+    text-decoration: none;
+}
+
+button,
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #218838;
+    color: white;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button:hover,
+.button:hover {
+    background-color: #1b7130;
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: calc(100% - 32px);
+    }
+}

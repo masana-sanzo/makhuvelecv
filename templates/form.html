@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} - My CV{% endblock %}
+{% block body_class %}form-page{% endblock %}
+{% block content %}
+<header>
+    <h1>{{ title }}</h1>
+    <h2>MAKHUVELE MASANA</h2>
+</header>
+<main class="container">
+    <form method="post" action="{{ url_for('step', step_number=step_number) }}">
+        {% for field in fields %}
+        <label for="{{ field.name }}">{{ field.label }}:</label>
+        {% if field.type == "textarea" %}
+        <textarea id="{{ field.name }}" name="{{ field.name }}" rows="4">{{ field.current_value }}</textarea>
+        {% else %}
+        <input type="{{ field.type|default('text') }}" id="{{ field.name }}" name="{{ field.name }}" value="{{ field.current_value }}">
+        {% endif %}
+        {% endfor %}
+        <footer class="form-actions">
+            <a href="{{ url_for('index') }}">Home</a>
+            <button type="submit">{{ next_label }}</button>
+        </footer>
+    </form>
+</main>
+{% endblock %}

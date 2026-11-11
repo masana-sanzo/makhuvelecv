@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}My CV{% endblock %}
+{% block body_class %}home-page{% endblock %}
+{% block content %}
+<header>
+    <h1>CURICULLUM VITAE</h1>
+    <h3>welcome</h3>
+</header>
+<main class="home-container">
+    <a class="box" href="{{ url_for('step', step_number=1) }}">
+        <h2>Personal Information</h2>
+        <p>My Personal information.</p>
+    </a>
+    <a class="box" href="{{ url_for('step', step_number=2) }}">
+        <h2>Education</h2>
+        <p>My academic background.</p>
+    </a>
+    <a class="box" href="{{ url_for('step', step_number=3) }}">
+        <h2>Work Experience</h2>
+    </a>
+    <a class="box" href="{{ url_for('step', step_number=4) }}">
+        <h2>Skills</h2>
+        <p>My abilities and skills.</p>
+    </a>
+    <a class="box" href="{{ url_for('step', step_number=5) }}">
+        <h2>Projects</h2>
+        <p>My completed projects.</p>
+    </a>
+    <a class="box" href="{{ url_for('step', step_number=6) }}">
+        <h2>Contact information</h2>
+    </a>
+    <a class="box" href="{{ url_for('summary') }}">
+        <h2>Show all information</h2>
+    </a>
+</main>
+{% endblock %}
