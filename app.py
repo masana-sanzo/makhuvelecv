@@ -20,6 +20,7 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
 STEPS = {
     1: {
         "title": "Personal Information",
+        "description": "Start with the contact details employers need and a short introduction to your professional strengths.",
         "next_label": "Next Page: Education",
         "fields": [
             {"name": "name", "label": "Name", "value": "Makhuvele Masana"},
@@ -34,21 +35,25 @@ STEPS = {
     },
     2: {
         "title": "Education",
+        "description": "Add each qualification separately so employers can see your degree, institution and graduation date clearly.",
         "next_label": "Next Page: Work Experience",
         "kind": "education",
     },
     3: {
         "title": "Work Experience",
+        "description": "Add each role separately. Focus responsibilities on what you did and achievements on the results you delivered.",
         "next_label": "Next Page: Skills",
         "kind": "experience",
     },
     4: {
         "title": "Skills",
+        "description": "List relevant skills one at a time. Choose specific abilities that match the roles you are targeting.",
         "next_label": "Next: Projects",
         "kind": "skills",
     },
     5: {
         "title": "Projects",
+        "description": "Show selected projects that demonstrate your practical experience, initiative or specialist knowledge.",
         "next_label": "Next: Contact",
         "fields": [
             {"name": "projects", "label": "Projects (comma-separated)", "value": "Project 1, Project 2, Project 3"},
@@ -56,6 +61,7 @@ STEPS = {
     },
     6: {
         "title": "Additional Information",
+        "description": "Add any relevant extras, then choose a CV style that suits your career stage and application.",
         "next_label": "Review CV",
         "kind": "additional",
         "fields": [
@@ -70,9 +76,35 @@ STEPS = {
 }
 
 TEMPLATES = {
-    "professional": {"label": "Professional", "color": "194C50", "font": "Aptos"},
-    "modern": {"label": "Modern", "color": "2855A6", "font": "Aptos"},
-    "academic": {"label": "Academic", "color": "5C4635", "font": "Georgia"},
+    "professional": {
+        "label": "Professional",
+        "description": "A clean, straightforward, ATS-friendly layout for most industries and online applications.",
+        "audience": "Best for corporate, administration, finance, technology and experienced professional roles.",
+        "color": "194C50",
+        "font": "Aptos",
+    },
+    "modern": {
+        "label": "Modern",
+        "description": "A contemporary layout with stronger visual hierarchy and a more distinctive presentation.",
+        "audience": "Best for creative, communications, product and other roles where a polished visual style helps.",
+        "color": "2855A6",
+        "font": "Aptos",
+    },
+    "academic": {
+        "label": "Academic",
+        "description": "A formal, text-focused layout that gives qualifications and scholarly experience room to lead.",
+        "audience": "Best for students, graduates, teachers, researchers and academic or education applications.",
+        "color": "5C4635",
+        "font": "Georgia",
+    },
+}
+
+ASSET_FILES = {
+    "Thoughtful Professional at Her Desk-1.png",
+    "Graduation Success in a Modern Study-2.png",
+    "Collaborative Office Teamwork-3.png",
+    "Professional Achievement Planning Desk-4.png",
+    "Confident Resume Presentation in a Modern Office-5.png",
 }
 
 
@@ -179,6 +211,7 @@ def step(step_number):
         next_label=step_data["next_label"],
         fields=fields,
         kind=step_data.get("kind", "standard"),
+        step_description=step_data["description"],
         cv=cv_data,
         templates=TEMPLATES,
     )
@@ -186,7 +219,13 @@ def step(step_number):
 
 @app.get("/summary")
 def summary():
-    return render_template("summary.html", cv=session.get("cv", {}), sections=build_cv_content(session.get("cv", {})))
+    cv = session.get("cv", {})
+    return render_template(
+        "summary.html",
+        cv=cv,
+        sections=build_cv_content(cv),
+        templates=TEMPLATES,
+    )
 
 
 def build_word_document(cv, selected_template):
@@ -321,9 +360,9 @@ def download(format_name):
 
 @app.get("/assets/<path:filename>")
 def assets(filename):
-    if filename not in {"1.jpg", "background2.jpg"}:
+    if filename not in ASSET_FILES:
         abort(404)
-    return send_from_directory(app.root_path, filename)
+    return send_from_directory(os.path.join(app.root_path, "assets"), filename)
 
 
 if __name__ == "__main__":

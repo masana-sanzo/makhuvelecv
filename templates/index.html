@@ -1,12 +1,95 @@
 {% extends "base.html" %}
-{% block title %}My CV{% endblock %}
+{% block title %}Sanzo Media CV Maker{% endblock %}
 {% block body_class %}home-page{% endblock %}
 {% block content %}
-<header>
-    <h1>Curriculum Vitae</h1>
-    <h3>Create a professional CV</h3>
-</header>
-<main class="home-container">
-    <a class="button create-cv-button" href="{{ url_for('step', step_number=1) }}">Create CV</a>
+<nav class="site-nav" aria-label="Main navigation">
+    <a class="brand" href="{{ url_for('index') }}">Sanzo Media <span>CV Maker</span></a>
+    <a class="button nav-cta" href="{{ url_for('step', step_number=1) }}">Create My CV</a>
+</nav>
+<main>
+    <section class="hero">
+        <img class="hero-image" src="{{ url_for('assets', filename='Confident Resume Presentation in a Modern Office-5.png') }}" alt="Professional presenting a completed CV in a modern office">
+        <div class="hero-shade"></div>
+        <div class="hero-content">
+            <p class="eyebrow">A clearer way to tell your career story</p>
+            <h1>Sanzo Media CV Maker</h1>
+            <h2>Build Your Future. Create Your Professional CV.</h2>
+            <p>Your career journey deserves a strong beginning. Sanzo Media CV Maker helps you create a professional, well-structured and attractive CV that showcases your qualifications, experience, skills and achievements.</p>
+            <p>Whether you are a student, recent graduate, experienced professional or job seeker, our guided CV builder makes it simple to present your professional story with confidence.</p>
+            <p class="hero-emphasis">Create your CV. Showcase your potential. Take the next step towards your dream job.</p>
+            <div class="hero-actions">
+                <a class="button" href="{{ url_for('step', step_number=1) }}">Create My CV</a>
+                <a class="text-link" href="#features">Explore Features <span aria-hidden="true">&darr;</span></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section features-section" id="features">
+        <div class="section-heading">
+            <p class="eyebrow">A practical toolkit for your next move</p>
+            <h2>Everything You Need to Create a Professional CV</h2>
+        </div>
+        <div class="feature-grid">
+            <article class="feature-item">
+                <span class="feature-number">01</span>
+                <h3>Easy CV Creation</h3>
+                <p>Create your CV through a simple, guided process. Enter your information step by step without struggling with complicated formatting.</p>
+            </article>
+            <article class="feature-item">
+                <span class="feature-number">02</span>
+                <h3>Multiple Education Records</h3>
+                <p>Showcase all your academic achievements, qualifications and educational background in one professional document.</p>
+            </article>
+            <article class="feature-item">
+                <span class="feature-number">03</span>
+                <h3>Multiple Work Experiences</h3>
+                <p>Present your employment history, responsibilities and achievements to demonstrate the value you bring.</p>
+            </article>
+            <article class="feature-item">
+                <span class="feature-number">04</span>
+                <h3>Professional CV Formatting</h3>
+                <p>Generate a clean, organised CV that makes your information easy for employers to read.</p>
+            </article>
+            <article class="feature-item">
+                <span class="feature-number">05</span>
+                <h3>Download in Word and PDF</h3>
+                <p>Choose Word for further editing or PDF for sharing and job applications.</p>
+            </article>
+            <article class="feature-item">
+                <span class="feature-number">06</span>
+                <h3>Customise Your Professional Profile</h3>
+                <p>Highlight your summary, skills, projects, certifications, languages and other achievements.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="how-section">
+        <div class="how-image-wrap">
+            <img src="{{ url_for('assets', filename='Professional Achievement Planning Desk-4.png') }}" alt="Professional planning career goals at a desk" loading="lazy">
+        </div>
+        <div class="how-content">
+            <p class="eyebrow">A straightforward process</p>
+            <h2>How It Works</h2>
+            <ol class="steps-list">
+                <li><span>1</span><div><h3>Enter Your Information</h3><p>Provide your personal details, education, work experience, skills and other relevant information.</p></div></li>
+                <li><span>2</span><div><h3>Review Your CV</h3><p>Check that everything accurately represents your qualifications and experience.</p></div></li>
+                <li><span>3</span><div><h3>Generate Your CV</h3><p>Sanzo Media CV Maker organises your information into a professional layout.</p></div></li>
+                <li><span>4</span><div><h3>Download and Apply</h3><p>Download your completed CV in Word or PDF and start applying for opportunities.</p></div></li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="future-section">
+        <img src="{{ url_for('assets', filename='Thoughtful Professional at Her Desk-1.png') }}" alt="Professional preparing for her next career opportunity" loading="lazy">
+        <div class="future-copy">
+            <p class="eyebrow">Your Skills. Your Experience. Your Future.</p>
+            <h2>Make a strong first impression.</h2>
+            <p>A great CV is more than a document. It is an opportunity to introduce yourself, communicate your strengths and make a positive first impression.</p>
+            <p>Whether you are applying for your first job or taking the next step in your career, Sanzo Media CV Maker helps you present your best professional self.</p>
+            <h3>Start Building Your Future Today!</h3>
+            <p>Create a CV that reflects your potential and brings your career ambitions one step closer.</p>
+            <a class="button" href="{{ url_for('step', step_number=1) }}">Create Your CV Today</a>
+        </div>
+    </section>
 </main>
 {% endblock %}

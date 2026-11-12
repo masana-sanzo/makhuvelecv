@@ -4,9 +4,10 @@
 {% block content %}
 <header>
     <h1>Summary of Your Information</h1>
+    <p>Review your details before downloading your CV.</p>
 </header>
 <main class="container">
-    <p class="selected-template">Selected template: {{ cv.get('template', 'professional')|title }}</p>
+    <p class="selected-template">Selected template: {{ templates[cv.get('template', 'professional')].label }}. {{ templates[cv.get('template', 'professional')].description }}</p>
     {% if cv.get('name') or cv.get('email') or cv.get('contactInfo') %}
     <section class="summary-section">
         <h2>{{ cv.get('name', '') }}</h2>

@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% block title %}{{ title }} - My CV{% endblock %}
-{% block body_class %}form-page{% endblock %}
+{% block body_class %}form-page form-step-{{ step_number }}{% endblock %}
 {% block content %}
 <header>
     <h1>{{ title }}</h1>
 </header>
 <main class="container">
+    <p class="step-guidance">{{ step_description }}</p>
     <form method="post" action="{{ url_for('step', step_number=step_number) }}">
         {% if kind == "education" %}
         <div class="repeatable-list" data-repeatable-list>
@@ -74,7 +75,7 @@
         {% endif %}
 
         {% for field in fields %}
-        <label for="{{ field.name }}">{{ field.label }}:</label>
+        <label for="{{ field.name }}">{{ field.label }}:{% if kind == "additional" %}<span class="optional-note">Optional</span>{% endif %}</label>
         {% if field.type == "textarea" %}
         <textarea id="{{ field.name }}" name="{{ field.name }}" rows="4">{{ field.current_value }}</textarea>
         {% else %}
@@ -83,13 +84,20 @@
         {% endfor %}
         {% if kind == "additional" %}
         <fieldset class="template-picker">
-            <legend>CV template</legend>
-            <label for="template">Choose a layout:</label>
-            <select id="template" name="template">
+            <legend>Choose a CV template</legend>
+            <p class="template-intro">Pick the presentation that best fits your role and career path. Your information stays the same in every format.</p>
+            <div class="template-options">
                 {% for key, option in templates.items() %}
-                <option value="{{ key }}" {% if cv.get('template', 'professional') == key %}selected{% endif %}>{{ option.label }}</option>
+                <label class="template-option" for="template-{{ key }}">
+                    <input type="radio" id="template-{{ key }}" name="template" value="{{ key }}" {% if cv.get('template', 'professional') == key %}checked{% endif %}>
+                    <span class="template-option-copy">
+                        <strong>{{ option.label }}</strong>
+                        <span>{{ option.description }}</span>
+                        <small>{{ option.audience }}</small>
+                    </span>
+                </label>
                 {% endfor %}
-            </select>
+            </div>
         </fieldset>
         {% endif %}
         <footer class="form-actions">
