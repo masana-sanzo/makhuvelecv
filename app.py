@@ -3,7 +3,7 @@ import secrets
 from io import BytesIO
 from xml.sax.saxutils import escape
 
-from flask import Flask, abort, redirect, render_template, request, send_file, send_from_directory, session, url_for
+from flask import Flask, abort, redirect, render_template, request, send_file, session, url_for
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt, RGBColor
@@ -14,7 +14,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="public", static_url_path="")
 app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
 
 STEPS = {
@@ -98,15 +98,6 @@ TEMPLATES = {
         "font": "Georgia",
     },
 }
-
-ASSET_FILES = {
-    "Thoughtful Professional at Her Desk-1.png",
-    "Graduation Success in a Modern Study-2.png",
-    "Collaborative Office Teamwork-3.png",
-    "Professional Achievement Planning Desk-4.png",
-    "Confident Resume Presentation in a Modern Office-5.png",
-}
-
 
 def form_list(field_name):
     return [value.strip() for value in request.form.getlist(field_name) if value.strip()]
@@ -356,13 +347,6 @@ def download(format_name):
         as_attachment=True,
         download_name=f"{filename}_CV.{extension}",
     )
-
-
-@app.get("/assets/<path:filename>")
-def assets(filename):
-    if filename not in ASSET_FILES:
-        abort(404)
-    return send_from_directory(os.path.join(app.root_path, "assets"), filename)
 
 
 if __name__ == "__main__":
