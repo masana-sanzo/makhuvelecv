@@ -3,6 +3,9 @@ import secrets
 from io import BytesIO
 
 from flask import Flask, abort, redirect, render_template, request, send_file, send_from_directory, session, url_for
+from docx import Document
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.shared import Inches, Pt, RGBColor
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
@@ -124,12 +127,82 @@ def summary():
 @app.get("/download")
 def download():
     cv = session.get("cv", {})
-    text = "\n".join(f"{label}: {cv.get(key, '')}" for label, key in SUMMARY_FIELDS)
+    document = Document()
+    section = document.sections[0]
+    section.top_margin = Inches(0.65)
+    section.bottom_margin = Inches(0.65)
+    section.left_margin = Inches(0.8)
+    section.right_margin = Inches(0.8)
+
+    normal_style = document.styles["Normal"]
+    normal_style.font.name = "Aptos"
+    normal_style.font.size = Pt(10)
+    normal_style.font.color.rgb = RGBColor(55, 65, 81)
+
+    name = cv.get("name", "").strip() or "Professional CV"
+    title = document.add_paragraph()
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    title.paragraph_format.space_after = Pt(4)
+    name_run = title.add_run(name.upper())
+    name_run.bold = True
+    name_run.font.name = "Aptos Display"
+    name_run.font.size = Pt(22)
+    name_run.font.color.rgb = RGBColor(25, 76, 80)
+
+    contact_line = " | ".join(
+        value for value in (cv.get("email", "").strip(), cv.get("contactInfo", "").strip()) if value
+    )
+    if contact_line:
+        contact = document.add_paragraph()
+        contact.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        contact.paragraph_format.space_after = Pt(12)
+        contact_run = contact.add_run(contact_line)
+        contact_run.font.size = Pt(9)
+        contact_run.font.color.rgb = RGBColor(91, 101, 111)
+
+    def add_section(heading, entries):
+        populated_entries = [(label, value.strip()) for label, value in entries if value and value.strip()]
+        if not populated_entries:
+            return
+        heading_paragraph = document.add_paragraph()
+        heading_paragraph.paragraph_format.space_before = Pt(10)
+        heading_paragraph.paragraph_format.space_after = Pt(4)
+        heading_run = heading_paragraph.add_run(heading.upper())
+        heading_run.bold = True
+        heading_run.font.name = "Aptos Display"
+        heading_run.font.size = Pt(11)
+        heading_run.font.color.rgb = RGBColor(25, 76, 80)
+        for label, value in populated_entries:
+            paragraph = document.add_paragraph()
+            paragraph.paragraph_format.space_after = Pt(3)
+            if label:
+                label_run = paragraph.add_run(f"{label}: ")
+                label_run.bold = True
+            paragraph.add_run(value)
+
+    add_section("Professional Summary", [("", cv.get("bio", ""))])
+    add_section("Education", [
+        ("Degree", cv.get("degree", "")),
+        ("Institution", cv.get("institution", "")),
+        ("Graduation year", cv.get("year", "")),
+    ])
+    add_section("Work Experience", [
+        ("Job title", cv.get("jobTitle", "")),
+        ("Company", cv.get("company", "")),
+        ("Duration", cv.get("duration", "")),
+    ])
+    add_section("Skills", [("", cv.get("skills", ""))])
+    add_section("Projects", [("", cv.get("projects", ""))])
+
+    output = BytesIO()
+    document.save(output)
+    output.seek(0)
+    filename = "_".join(name.split()) or "professional_cv"
     return send_file(
-        BytesIO(text.encode("utf-8")),
-        mimetype="text/plain",
+        output,
+        mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         as_attachment=True,
-        download_name="summary.txt",
+        download_name=f"{filename}_CV.docx",
     )
 
 
