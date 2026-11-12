@@ -1,4 +1,6 @@
 body {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
     margin: 0;
     color: white;
@@ -28,30 +30,21 @@ header {
 
 .home-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
 }
 
-.box,
 .container {
     padding: 20px;
     border-radius: 10px;
     background: rgba(0, 0, 0, 0.7);
 }
 
-.box {
-    width: 200px;
-    margin: 10px;
-    border: 1px solid #fff;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    transition: transform 0.2s;
-}
-
-.box:hover {
-    transform: scale(1.05);
+.create-cv-button {
+    padding: 14px 32px;
+    font-size: 18px;
 }
 
 .container {
@@ -84,6 +77,14 @@ textarea {
 footer {
     margin-top: 20px;
     text-align: center;
+}
+
+.site-footer {
+    margin-top: auto;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.55);
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 13px;
 }
 
 .form-actions,
