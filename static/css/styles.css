@@ -15,32 +15,32 @@ body {
 .form-page {
     color: white;
     background-color: #173739;
-    background-image: linear-gradient(rgba(18, 38, 40, 0.64), rgba(18, 38, 40, 0.64)), url("/assets/Thoughtful%20Professional%20at%20Her%20Desk-1.png");
+    background-image: linear-gradient(rgba(18, 38, 40, 0.64), rgba(18, 38, 40, 0.64)), url("../../assets/Thoughtful%20Professional%20at%20Her%20Desk-1.png");
     background-position: center;
     background-size: cover;
 }
 
 .form-step-2 {
-    background-image: linear-gradient(rgba(18, 38, 40, 0.64), rgba(18, 38, 40, 0.64)), url("/assets/Graduation%20Success%20in%20a%20Modern%20Study-2.png");
+    background-image: linear-gradient(rgba(18, 38, 40, 0.64), rgba(18, 38, 40, 0.64)), url("../../assets/Graduation%20Success%20in%20a%20Modern%20Study-2.png");
 }
 
 .form-step-3 {
-    background-image: linear-gradient(rgba(18, 38, 40, 0.64), rgba(18, 38, 40, 0.64)), url("/assets/Collaborative%20Office%20Teamwork-3.png");
+    background-image: linear-gradient(rgba(18, 38, 40, 0.64), rgba(18, 38, 40, 0.64)), url("../../assets/Collaborative%20Office%20Teamwork-3.png");
 }
 
 .form-step-4 {
-    background-image: linear-gradient(rgba(18, 38, 40, 0.64), rgba(18, 38, 40, 0.64)), url("/assets/Professional%20Achievement%20Planning%20Desk-4.png");
+    background-image: linear-gradient(rgba(18, 38, 40, 0.64), rgba(18, 38, 40, 0.64)), url("../../assets/Professional%20Achievement%20Planning%20Desk-4.png");
 }
 
 .form-step-5,
 .form-step-6 {
-    background-image: linear-gradient(rgba(18, 38, 40, 0.64), rgba(18, 38, 40, 0.64)), url("/assets/Confident%20Resume%20Presentation%20in%20a%20Modern%20Office-5.png");
+    background-image: linear-gradient(rgba(18, 38, 40, 0.64), rgba(18, 38, 40, 0.64)), url("../../assets/Confident%20Resume%20Presentation%20in%20a%20Modern%20Office-5.png");
 }
 
 .summary-page {
     color: white;
     background-color: #173739;
-    background-image: linear-gradient(rgba(18, 38, 40, 0.72), rgba(18, 38, 40, 0.72)), url("/assets/Professional%20Achievement%20Planning%20Desk-4.png");
+    background-image: linear-gradient(rgba(18, 38, 40, 0.72), rgba(18, 38, 40, 0.72)), url("../../assets/Professional%20Achievement%20Planning%20Desk-4.png");
     background-position: center;
     background-size: cover;
 }
