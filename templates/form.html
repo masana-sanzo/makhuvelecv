@@ -7,6 +7,72 @@
 </header>
 <main class="container">
     <form method="post" action="{{ url_for('step', step_number=step_number) }}">
+        {% if kind == "education" %}
+        <div class="repeatable-list" data-repeatable-list>
+            {% for item in cv.get('education', [{}]) %}
+            <fieldset class="repeatable-item">
+                <legend>Qualification {{ loop.index }}</legend>
+                <label>Qualification / Degree:<input name="education_degree[]" value="{{ item.get('degree', '') }}"></label>
+                <label>Institution:<input name="education_institution[]" value="{{ item.get('institution', '') }}"></label>
+                <label>Graduation date:<input name="education_year[]" value="{{ item.get('year', '') }}" placeholder="Year or month and year"></label>
+                <button class="remove-item" type="button" data-remove-row>Remove qualification</button>
+            </fieldset>
+            {% endfor %}
+        </div>
+        <button type="button" class="secondary-button" data-add-row="education">Add another qualification</button>
+        <template data-row-template="education">
+            <fieldset class="repeatable-item">
+                <legend>Qualification</legend>
+                <label>Qualification / Degree:<input name="education_degree[]"></label>
+                <label>Institution:<input name="education_institution[]"></label>
+                <label>Graduation date:<input name="education_year[]" placeholder="Year or month and year"></label>
+                <button class="remove-item" type="button" data-remove-row>Remove qualification</button>
+            </fieldset>
+        </template>
+        {% elif kind == "experience" %}
+        <div class="repeatable-list" data-repeatable-list>
+            {% for item in cv.get('experience', [{}]) %}
+            <fieldset class="repeatable-item">
+                <legend>Experience {{ loop.index }}</legend>
+                <label>Job title:<input name="experience_job_title[]" value="{{ item.get('job_title', '') }}"></label>
+                <label>Employer:<input name="experience_employer[]" value="{{ item.get('employer', '') }}"></label>
+                <label>Dates:<input name="experience_dates[]" value="{{ item.get('dates', '') }}" placeholder="e.g. Jan 2022 - Present"></label>
+                <label>Responsibilities:<textarea name="experience_responsibilities[]" rows="3">{{ item.get('responsibilities', '') }}</textarea></label>
+                <label>Achievements:<textarea name="experience_achievements[]" rows="3">{{ item.get('achievements', '') }}</textarea></label>
+                <button class="remove-item" type="button" data-remove-row>Remove experience</button>
+            </fieldset>
+            {% endfor %}
+        </div>
+        <button type="button" class="secondary-button" data-add-row="experience">Add another experience</button>
+        <template data-row-template="experience">
+            <fieldset class="repeatable-item">
+                <legend>Experience</legend>
+                <label>Job title:<input name="experience_job_title[]"></label>
+                <label>Employer:<input name="experience_employer[]"></label>
+                <label>Dates:<input name="experience_dates[]" placeholder="e.g. Jan 2022 - Present"></label>
+                <label>Responsibilities:<textarea name="experience_responsibilities[]" rows="3"></textarea></label>
+                <label>Achievements:<textarea name="experience_achievements[]" rows="3"></textarea></label>
+                <button class="remove-item" type="button" data-remove-row>Remove experience</button>
+            </fieldset>
+        </template>
+        {% elif kind == "skills" %}
+        <div class="repeatable-list skill-list" data-repeatable-list>
+            {% for skill in cv.get('skills', ['']) %}
+            <div class="skill-row">
+                <label>Skill {{ loop.index }}:<input name="skills[]" value="{{ skill }}"></label>
+                <button class="remove-item" type="button" data-remove-row aria-label="Remove skill {{ loop.index }}">Remove</button>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" class="secondary-button" data-add-row="skill">Add a skill</button>
+        <template data-row-template="skill">
+            <div class="skill-row">
+                <label>Skill:<input name="skills[]"></label>
+                <button class="remove-item" type="button" data-remove-row aria-label="Remove skill">Remove</button>
+            </div>
+        </template>
+        {% endif %}
+
         {% for field in fields %}
         <label for="{{ field.name }}">{{ field.label }}:</label>
         {% if field.type == "textarea" %}
@@ -15,6 +81,17 @@
         <input type="{{ field.type|default('text') }}" id="{{ field.name }}" name="{{ field.name }}" value="{{ field.current_value }}">
         {% endif %}
         {% endfor %}
+        {% if kind == "additional" %}
+        <fieldset class="template-picker">
+            <legend>CV template</legend>
+            <label for="template">Choose a layout:</label>
+            <select id="template" name="template">
+                {% for key, option in templates.items() %}
+                <option value="{{ key }}" {% if cv.get('template', 'professional') == key %}selected{% endif %}>{{ option.label }}</option>
+                {% endfor %}
+            </select>
+        </fieldset>
+        {% endif %}
         <footer class="form-actions">
             <a href="{{ url_for('index') }}">Home</a>
             <button type="submit">{{ next_label }}</button>

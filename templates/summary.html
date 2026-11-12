@@ -6,13 +6,25 @@
     <h1>Summary of Your Information</h1>
 </header>
 <main class="container">
-    <h3>Your Information:</h3>
-    {% for label, key in fields %}
-    <p><strong>{{ label }}:</strong> {{ cv.get(key, '') }}</p>
+    <p class="selected-template">Selected template: {{ cv.get('template', 'professional')|title }}</p>
+    {% if cv.get('name') or cv.get('email') or cv.get('contactInfo') %}
+    <section class="summary-section">
+        <h2>{{ cv.get('name', '') }}</h2>
+        <p>{{ cv.get('email', '') }}{% if cv.get('email') and cv.get('contactInfo') %} | {% endif %}{{ cv.get('contactInfo', '') }}</p>
+    </section>
+    {% endif %}
+    {% for heading, entries in sections %}
+    <section class="summary-section">
+        <h3>{{ heading }}</h3>
+        {% for entry in entries %}
+        <p>{{ entry }}</p>
+        {% endfor %}
+    </section>
     {% endfor %}
 </main>
 <footer class="summary-actions">
-    <a class="button" href="{{ url_for('download') }}">Download MY CV</a>
+    <a class="button" href="{{ url_for('download', format_name='word') }}">Download Word</a>
+    <a class="button" href="{{ url_for('download', format_name='pdf') }}">Download PDF</a>
     <a href="{{ url_for('index') }}">Home</a>
 </footer>
 {% endblock %}

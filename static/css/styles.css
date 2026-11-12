@@ -60,7 +60,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
     box-sizing: border-box;
     width: 100%;
     padding: 10px;
@@ -72,6 +73,76 @@ textarea {
 
 textarea {
     resize: vertical;
+}
+
+.repeatable-list {
+    display: grid;
+    gap: 14px;
+}
+
+.repeatable-item,
+.template-picker {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+}
+
+.repeatable-item legend,
+.template-picker legend {
+    padding: 0 6px;
+    font-weight: 700;
+}
+
+.skill-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 12px;
+}
+
+.skill-row label {
+    min-width: 0;
+}
+
+.skill-row .remove-item {
+    margin-bottom: 10px;
+}
+
+.secondary-button,
+.remove-item {
+    margin: 12px 0;
+}
+
+.secondary-button {
+    background: #315b70;
+}
+
+.remove-item {
+    background: #783c38;
+}
+
+.secondary-button:hover {
+    background: #254759;
+}
+
+.remove-item:hover {
+    background: #632f2b;
+}
+
+.summary-section {
+    padding: 4px 0 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.summary-section h2,
+.summary-section h3 {
+    margin-bottom: 6px;
+}
+
+.selected-template {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
 }
 
 footer {

@@ -1,11 +1,18 @@
 import os
 import secrets
 from io import BytesIO
+from xml.sax.saxutils import escape
 
 from flask import Flask, abort, redirect, render_template, request, send_file, send_from_directory, session, url_for
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches, Pt, RGBColor
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import inch
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
@@ -28,31 +35,17 @@ STEPS = {
     2: {
         "title": "Education",
         "next_label": "Next Page: Work Experience",
-        "fields": [
-            {"name": "degree", "label": "Degree", "value": "BSC In Computer science"},
-            {"name": "institution", "label": "Institution", "value": "University of Johannesburg"},
-            {"name": "year", "label": "Year of Graduation", "value": "2021"},
-        ],
+        "kind": "education",
     },
     3: {
         "title": "Work Experience",
         "next_label": "Next Page: Skills",
-        "fields": [
-            {"name": "jobTitle", "label": "Job Title", "value": "Software Programmer"},
-            {"name": "company", "label": "Company", "value": "Sanzo Media "},
-            {"name": "duration", "label": "Duration", "value": "2022-present"},
-        ],
+        "kind": "experience",
     },
     4: {
         "title": "Skills",
         "next_label": "Next: Projects",
-        "fields": [
-            {
-                "name": "skills",
-                "label": "Skills (comma-separated)",
-                "value": "database analyst, software Programmer, website creator",
-            },
-        ],
+        "kind": "skills",
     },
     5: {
         "title": "Projects",
@@ -62,28 +55,61 @@ STEPS = {
         ],
     },
     6: {
-        "title": "Contact",
-        "next_label": "Show all info in 1 page",
+        "title": "Additional Information",
+        "next_label": "Review CV",
+        "kind": "additional",
         "fields": [
-            {"name": "contactInfo", "label": "Contact Info", "value": "contact number: 082 457 4898"},
+            {"name": "contactInfo", "label": "Contact information", "type": "textarea", "value": ""},
+            {"name": "certifications", "label": "Certifications (one per line)", "type": "textarea", "value": ""},
+            {"name": "languages", "label": "Languages (one per line)", "type": "textarea", "value": ""},
+            {"name": "volunteering", "label": "Volunteering", "type": "textarea", "value": ""},
+            {"name": "achievements", "label": "Achievements (one per line)", "type": "textarea", "value": ""},
+            {"name": "references", "label": "Professional references", "type": "textarea", "value": ""},
         ],
     },
 }
 
-SUMMARY_FIELDS = [
-    ("Name", "name"),
-    ("Email", "email"),
-    ("Bio", "bio"),
-    ("Degree", "degree"),
-    ("Institution", "institution"),
-    ("Year of Graduation", "year"),
-    ("Job Title", "jobTitle"),
-    ("Company", "company"),
-    ("Duration", "duration"),
-    ("Skills", "skills"),
-    ("Projects", "projects"),
-    ("Contact Info", "contactInfo"),
-]
+TEMPLATES = {
+    "professional": {"label": "Professional", "color": "194C50", "font": "Aptos"},
+    "modern": {"label": "Modern", "color": "2855A6", "font": "Aptos"},
+    "academic": {"label": "Academic", "color": "5C4635", "font": "Georgia"},
+}
+
+
+def form_list(field_name):
+    return [value.strip() for value in request.form.getlist(field_name) if value.strip()]
+
+
+def build_cv_content(cv):
+    sections = []
+    if cv.get("bio", "").strip():
+        sections.append(("Professional Summary", [cv["bio"].strip()]))
+    if cv.get("education"):
+        sections.append(("Education", [
+            " | ".join(value for value in (item.get("degree"), item.get("institution"), item.get("year")) if value)
+            for item in cv["education"]
+        ]))
+    if cv.get("experience"):
+        entries = []
+        for item in cv["experience"]:
+            heading = " | ".join(value for value in (item.get("job_title"), item.get("employer"), item.get("dates")) if value)
+            detail = "\n".join(value for value in (item.get("responsibilities"), item.get("achievements")) if value)
+            entries.append("\n".join(value for value in (heading, detail) if value))
+        sections.append(("Work Experience", entries))
+    for key, heading in (
+        ("skills", "Skills"),
+        ("projects", "Projects"),
+        ("certifications", "Certifications"),
+        ("languages", "Languages"),
+        ("volunteering", "Volunteering"),
+        ("achievements", "Achievements"),
+        ("references", "Professional References"),
+    ):
+        values = cv.get(key, []) if isinstance(cv.get(key), list) else cv.get(key, "").splitlines()
+        values = [value.strip() for value in values if value.strip()]
+        if values:
+            sections.append((heading, values))
+    return sections
 
 
 @app.get("/")
@@ -98,9 +124,45 @@ def step(step_number):
 
     step_data = STEPS[step_number]
     if request.method == "POST":
-        cv_data = session.get("cv", {})
-        for field in step_data["fields"]:
-            cv_data[field["name"]] = request.form.get(field["name"], "").strip()
+        cv_data = dict(session.get("cv", {}))
+        if step_number == 2:
+            degrees = request.form.getlist("education_degree[]")
+            institutions = request.form.getlist("education_institution[]")
+            years = request.form.getlist("education_year[]")
+            cv_data["education"] = [
+                {"degree": degree.strip(), "institution": institution.strip(), "year": year.strip()}
+                for degree, institution, year in zip(degrees, institutions, years)
+                if degree.strip() or institution.strip() or year.strip()
+            ]
+        elif step_number == 3:
+            job_titles = request.form.getlist("experience_job_title[]")
+            employers = request.form.getlist("experience_employer[]")
+            dates = request.form.getlist("experience_dates[]")
+            responsibilities = request.form.getlist("experience_responsibilities[]")
+            achievements = request.form.getlist("experience_achievements[]")
+            cv_data["experience"] = [
+                {
+                    "job_title": job_title.strip(),
+                    "employer": employer.strip(),
+                    "dates": date_range.strip(),
+                    "responsibilities": responsibility.strip(),
+                    "achievements": achievement.strip(),
+                }
+                for job_title, employer, date_range, responsibility, achievement in zip(
+                    job_titles, employers, dates, responsibilities, achievements
+                )
+                if any(value.strip() for value in (job_title, employer, date_range, responsibility, achievement))
+            ]
+        elif step_number == 4:
+            cv_data["skills"] = form_list("skills[]")
+        else:
+            for field in step_data.get("fields", []):
+                value = request.form.get(field["name"], "").strip()
+                cv_data[field["name"]] = value
+            if step_number == 6:
+                cv_data["template"] = request.form.get("template", "professional")
+                if cv_data["template"] not in TEMPLATES:
+                    cv_data["template"] = "professional"
         session["cv"] = cv_data
         next_url = url_for("summary") if step_number == 6 else url_for("step", step_number=step_number + 1)
         return redirect(next_url)
@@ -108,7 +170,7 @@ def step(step_number):
     cv_data = session.get("cv", {})
     fields = [
         {**field, "current_value": cv_data.get(field["name"], field["value"])}
-        for field in step_data["fields"]
+        for field in step_data.get("fields", [])
     ]
     return render_template(
         "form.html",
@@ -116,93 +178,144 @@ def step(step_number):
         title=step_data["title"],
         next_label=step_data["next_label"],
         fields=fields,
+        kind=step_data.get("kind", "standard"),
+        cv=cv_data,
+        templates=TEMPLATES,
     )
 
 
 @app.get("/summary")
 def summary():
-    return render_template("summary.html", fields=SUMMARY_FIELDS, cv=session.get("cv", {}))
+    return render_template("summary.html", cv=session.get("cv", {}), sections=build_cv_content(session.get("cv", {})))
 
 
-@app.get("/download")
-def download():
-    cv = session.get("cv", {})
+def build_word_document(cv, selected_template):
+    style = TEMPLATES[selected_template]
+    accent = RGBColor.from_string(style["color"])
+    academic = selected_template == "academic"
+    modern = selected_template == "modern"
     document = Document()
-    section = document.sections[0]
-    section.top_margin = Inches(0.65)
-    section.bottom_margin = Inches(0.65)
-    section.left_margin = Inches(0.8)
-    section.right_margin = Inches(0.8)
-
-    normal_style = document.styles["Normal"]
-    normal_style.font.name = "Aptos"
-    normal_style.font.size = Pt(10)
-    normal_style.font.color.rgb = RGBColor(55, 65, 81)
+    page = document.sections[0]
+    page.top_margin = Inches(0.65)
+    page.bottom_margin = Inches(0.65)
+    page.left_margin = Inches(0.8)
+    page.right_margin = Inches(0.8)
+    normal = document.styles["Normal"]
+    normal.font.name = style["font"]
+    normal.font.size = Pt(10 if not academic else 11)
+    normal.font.color.rgb = RGBColor(55, 65, 81)
 
     name = cv.get("name", "").strip() or "Professional CV"
-    title = document.add_paragraph()
-    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    title.paragraph_format.space_after = Pt(4)
-    name_run = title.add_run(name.upper())
+    heading = document.add_paragraph()
+    heading.alignment = WD_ALIGN_PARAGRAPH.CENTER if academic or modern else WD_ALIGN_PARAGRAPH.LEFT
+    name_run = heading.add_run(name.upper() if not academic else name)
     name_run.bold = True
-    name_run.font.name = "Aptos Display"
-    name_run.font.size = Pt(22)
-    name_run.font.color.rgb = RGBColor(25, 76, 80)
-
-    contact_line = " | ".join(
-        value for value in (cv.get("email", "").strip(), cv.get("contactInfo", "").strip()) if value
-    )
+    name_run.font.name = style["font"]
+    name_run.font.size = Pt(24 if modern else 20)
+    name_run.font.color.rgb = accent
+    contact_line = " | ".join(value for value in (cv.get("email", "").strip(), cv.get("contactInfo", "").strip()) if value)
     if contact_line:
-        contact = document.add_paragraph()
-        contact.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        contact.paragraph_format.space_after = Pt(12)
-        contact_run = contact.add_run(contact_line)
-        contact_run.font.size = Pt(9)
-        contact_run.font.color.rgb = RGBColor(91, 101, 111)
+        contact = document.add_paragraph(contact_line)
+        contact.alignment = WD_ALIGN_PARAGRAPH.CENTER if academic or modern else WD_ALIGN_PARAGRAPH.LEFT
 
-    def add_section(heading, entries):
-        populated_entries = [(label, value.strip()) for label, value in entries if value and value.strip()]
-        if not populated_entries:
-            return
-        heading_paragraph = document.add_paragraph()
-        heading_paragraph.paragraph_format.space_before = Pt(10)
-        heading_paragraph.paragraph_format.space_after = Pt(4)
-        heading_run = heading_paragraph.add_run(heading.upper())
-        heading_run.bold = True
-        heading_run.font.name = "Aptos Display"
-        heading_run.font.size = Pt(11)
-        heading_run.font.color.rgb = RGBColor(25, 76, 80)
-        for label, value in populated_entries:
+    for section_name, entries in build_cv_content(cv):
+        section_heading = document.add_paragraph()
+        section_heading.paragraph_format.space_before = Pt(10)
+        section_heading.paragraph_format.space_after = Pt(4)
+        section_run = section_heading.add_run(section_name if academic else section_name.upper())
+        section_run.bold = True
+        section_run.font.name = style["font"]
+        section_run.font.size = Pt(12 if academic else 11)
+        section_run.font.color.rgb = accent
+        for entry in entries:
             paragraph = document.add_paragraph()
-            paragraph.paragraph_format.space_after = Pt(3)
-            if label:
-                label_run = paragraph.add_run(f"{label}: ")
-                label_run.bold = True
-            paragraph.add_run(value)
+            paragraph.paragraph_format.space_after = Pt(4)
+            if modern or academic:
+                paragraph.style = document.styles["List Bullet"]
+            paragraph.add_run(entry)
+    return document
 
-    add_section("Professional Summary", [("", cv.get("bio", ""))])
-    add_section("Education", [
-        ("Degree", cv.get("degree", "")),
-        ("Institution", cv.get("institution", "")),
-        ("Graduation year", cv.get("year", "")),
-    ])
-    add_section("Work Experience", [
-        ("Job title", cv.get("jobTitle", "")),
-        ("Company", cv.get("company", "")),
-        ("Duration", cv.get("duration", "")),
-    ])
-    add_section("Skills", [("", cv.get("skills", ""))])
-    add_section("Projects", [("", cv.get("projects", ""))])
 
+def build_pdf(cv, selected_template):
+    palette = {
+        "professional": colors.HexColor("#194C50"),
+        "modern": colors.HexColor("#2855A6"),
+        "academic": colors.HexColor("#5C4635"),
+    }
+    accent = palette[selected_template]
+    academic = selected_template == "academic"
+    modern = selected_template == "modern"
+    name = cv.get("name", "").strip() or "Professional CV"
     output = BytesIO()
-    document.save(output)
+    pdf = SimpleDocTemplate(
+        output,
+        pagesize=letter,
+        rightMargin=0.75 * inch,
+        leftMargin=0.75 * inch,
+        topMargin=0.65 * inch,
+        bottomMargin=0.65 * inch,
+        title=f"{name} CV",
+        author=name,
+    )
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        "CVTitle", parent=styles["Title"], fontName="Times-Bold" if academic else "Helvetica-Bold",
+        fontSize=22 if modern else 20, leading=26, textColor=accent,
+        alignment=TA_CENTER if academic or modern else TA_LEFT, spaceAfter=5,
+    )
+    contact_style = ParagraphStyle(
+        "CVContact", parent=styles["Normal"], fontSize=9, textColor=colors.HexColor("#5B656F"),
+        alignment=TA_CENTER if academic or modern else TA_LEFT, spaceAfter=12,
+    )
+    section_style = ParagraphStyle(
+        "CVSection", parent=styles["Heading2"], fontName="Times-Bold" if academic else "Helvetica-Bold",
+        fontSize=12 if academic else 11, leading=15, textColor=accent, spaceBefore=10, spaceAfter=4,
+    )
+    body_style = ParagraphStyle(
+        "CVBody", parent=styles["BodyText"], fontName="Times-Roman" if academic else "Helvetica",
+        fontSize=10 if not academic else 11, leading=14, textColor=colors.HexColor("#374151"), spaceAfter=4,
+        leftIndent=12 if modern or academic else 0,
+    )
+    story = [Paragraph(escape(name.upper() if not academic else name), title_style)]
+    contacts = " | ".join(value for value in (cv.get("email", "").strip(), cv.get("contactInfo", "").strip()) if value)
+    if contacts:
+        story.append(Paragraph(escape(contacts), contact_style))
+    for section_name, entries in build_cv_content(cv):
+        story.append(Paragraph(escape(section_name if academic else section_name.upper()), section_style))
+        story.extend(Paragraph(escape(entry).replace("\n", "<br/>"), body_style) for entry in entries)
+    pdf.build(story)
     output.seek(0)
+    return output
+
+
+def selected_cv_template(cv):
+    selected = cv.get("template", "professional")
+    return selected if selected in TEMPLATES else "professional"
+
+
+@app.get("/download/<format_name>")
+def download(format_name):
+    if format_name not in {"word", "pdf"}:
+        abort(404)
+    cv = session.get("cv", {})
+    selected = selected_cv_template(cv)
+    name = cv.get("name", "").strip() or "professional_cv"
     filename = "_".join(name.split()) or "professional_cv"
+    if format_name == "word":
+        output = BytesIO()
+        build_word_document(cv, selected).save(output)
+        output.seek(0)
+        mimetype = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        extension = "docx"
+    else:
+        output = build_pdf(cv, selected)
+        mimetype = "application/pdf"
+        extension = "pdf"
     return send_file(
         output,
-        mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        mimetype=mimetype,
         as_attachment=True,
-        download_name=f"{filename}_CV.docx",
+        download_name=f"{filename}_CV.{extension}",
     )
 
 
