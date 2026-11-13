@@ -3,7 +3,10 @@
 {% block body_class %}home-page{% endblock %}
 {% block content %}
 <nav class="site-nav" aria-label="Main navigation">
-    <a class="brand" href="{{ url_for('index') }}">Sanzo Media <span>CV Maker</span></a>
+    <a class="brand" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='assets/logo.png') }}" alt="">
+        <span class="brand-name">Sanzo Media <span>CV Maker</span></span>
+    </a>
     <a class="button nav-cta" href="{{ url_for('step', step_number=1) }}">Create My CV</a>
 </nav>
 <main>

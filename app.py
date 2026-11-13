@@ -23,13 +23,13 @@ STEPS = {
         "description": "Start with the contact details employers need and a short introduction to your professional strengths.",
         "next_label": "Next Page: Education",
         "fields": [
-            {"name": "name", "label": "Name", "value": "Makhuvele Masana"},
-            {"name": "email", "label": "Email", "type": "email", "value": "sanzokhubs@gamil.com"},
+            {"name": "name", "label": "Name", "value": ""},
+            {"name": "email", "label": "Email", "type": "email", "value": ""},
             {
                 "name": "bio",
                 "label": "Bio",
                 "type": "textarea",
-                "value": "Experienced financial analyst with expertise in financial modeling, data analysis, and business strategy.",
+                "value": "",
             },
         ],
     },

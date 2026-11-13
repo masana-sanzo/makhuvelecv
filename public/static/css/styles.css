@@ -62,13 +62,24 @@ header {
 }
 
 .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
     color: white;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
     text-decoration: none;
 }
 
-.brand span {
+.brand > img {
+    display: block;
+    width: 82px;
+    height: 32px;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.brand-name > span {
     color: #73d0bd;
 }
 
@@ -512,6 +523,16 @@ button:hover,
 
     .site-nav {
         padding: 14px 18px;
+    }
+
+    .brand {
+        gap: 6px;
+        font-size: 13px;
+    }
+
+    .brand > img {
+        width: 62px;
+        height: 28px;
     }
 
     .hero {
